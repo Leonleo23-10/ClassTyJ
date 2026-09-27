@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap');
+
+:root {
+    --background: #f4f5f2;
+    --surface: #ffffff;
+    --text: #252a27;
+    --muted: #737b76;
+    --accent: #8aa398;
+    --accent-light: #e5ece7;
+    --border: #dfe4df;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    margin: 0;
+    padding: 32px 20px;
+    color: var(--text);
+    background: var(--background);
+    font-family: 'DM Sans', sans-serif;
+}
+
+#tamagotchi {
+    width: min(100%, 440px);
+    min-height: 560px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 32px;
+    padding: 48px 32px 40px;
+    overflow: hidden;
+    background: var(--surface);
+    border: 1px solid var(--border) !important;
+    border-radius: 24px;
+    box-shadow: 0 20px 50px rgba(37, 42, 39, 0.08);
+}
+
+form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    gap: 10px;
+}
+
+label {
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+input {
+    width: 100%;
+    padding: 14px 16px;
+    color: var(--text);
+    background: var(--accent-light);
+    border: 1px solid transparent;
+    border-radius: 12px;
+    font: inherit;
+    outline: none;
+    transition: border-color 180ms ease, background 180ms ease;
+}
+
+input::placeholder {
+    color: #a2aaa5;
+}
+
+input:focus {
+    background: var(--surface);
+    border-color: var(--accent);
+}
+
+button {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 150ms ease, box-shadow 150ms ease, opacity 150ms ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(37, 42, 39, 0.12);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+form button {
+    background: var(--accent);
+    color: white;
+    margin-top: 6px;
+}
+
+#controles {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+}
+
+#controles button {
+    flex: 1;
+    background: #f0efe9;
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+#controles button:hover {
+    background: #e7e4db;
+}
+
+#estado {
+    width: 100%;
+    padding: 16px;
+    color: var(--text);
+    background: var(--accent-light);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font-size: 0.9rem;
+}
+
+#estado p {
+    margin: 0 0 8px;
+}
+
+#estado p strong {
+    font-size: 1rem;
+}
+
+#registro {
+    display: block;
+    margin-top: 12px;
+    color: var(--muted);
+}
+
+#tamagotchi img {
+    width: min(100%, 250px) !important;
+    height: auto;
+    margin-top: auto !important;
+    mix-blend-mode: multiply;
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 16px;
+    }
+
+    #tamagotchi {
+        min-height: 520px;
+        padding: 32px 24px;
+        border-radius: 18px;
+    }
+}

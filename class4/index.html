@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamagotchi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="tamagotchi" 
+        style="display: flex; 
+        justify-content: center;
+        align-content: center;
+        border: 5px solid blue;
+        "
+    >
+    <section id="estado" aria-live="polite" style="display: none;">
+            <p><strong>Estado de <span id="nombre-mascota">tu mascota</span></strong></p>
+            <p>Hambre: <span id="valor-hambre">90</span></p>
+            <p>Felicidad: <span id="valor-felicidad">30</span></p>
+            <output id="registro">Escribe un nombre para comenzar.</output>
+        </section>
+        <form>
+            <label for="name">Nómbrame</label>
+            <input id="name" name="name" type="text" placeholder="Escribe un nombre">
+            <button type="submit">Guardar</button>
+        </form>
+
+        <img src="https://www.gifsanimados.org/data/media/476/huevo-imagen-animada-0003.gif" 
+            alt=""
+            style="width: 30vw; margin-top: 10px;"
+        >
+
+        <div id="controles" style="visibility: hidden;">
+            <button id="alimentar" type="button">Alimentar</button>
+            <button id="jugar" type="button">Jugar</button>
+        </div>
+
+       
+    </div>
+    <script>
+          const tamagotchi = {
+            nombre: '',
+            _hambre: 90,
+            _felicidad: 30,
+            get felicidad() {
+                return this._felicidad
+            },
+            set felicidad(valor) {
+                if (valor < 0) valor = 0
+                if (valor > 100) valor = 100
+                this._felicidad = valor
+            },
+            get hambre() {
+                return this._hambre
+            },
+            set hambre(valor) {
+                if (valor != this.hambre) 
+                this._hambre= valor
+                if (valor < 0) valor = 0
+                if (valor > 100) valor = 100
+                this._hambre = valor
+                if (this._hambre== true){
+                    indicadorhambre.style.visibility = 'visible'
+                } else {
+                    indicadorhambre.style.visibility = 'hidden'
+                }
+            },
+            calcular(hambre, felicidad) {
+                if (this.hambre > 70) {
+                    this.basicos._hambre = true
+                } else {
+                    this.basicos._hambre = false
+                }
+            },
+            nacer(nombre) {
+                this.nombre = nombre
+                setInterval(this.pasarTiempo.bind(this), 3000);
+                document.querySelector('#nombre-mascota').textContent = this.nombre
+                document.querySelector('img').src = 'https://www.gifsanimados.org/data/media/187/dinosaurio-imagen-animada-0007.gif'
+                document.querySelector('form').style.visibility = 'hidden'
+                document.querySelector('#controles').style.visibility = 'visible'//hace que se vean los elementos
+                document.querySelector('#estado').style.display = 'block'
+                actualizarEstado('¡Ha nacido tu mascota!')
+                
+            },
+            pasarTiempo() {
+                this.hambre += 5
+                this.felicidad -= 2
+                actualizarEstado('El tiempo ha pasado.')
+                indicadores.calcular(this.hambre, this.felicidad)
+            },
+            alimentar() {
+                this.hambre -= 30
+                this.felicidad += 5
+                actualizarEstado('Has alimentado a tu mascota.')
+            },
+            jugar() {
+                this.hambre += 5
+                this.felicidad += 20
+                actualizarEstado('Habéis jugado juntos.')
+            }
+
+        }
+        const indicadores = {
+            basicos: {
+                _hambre: true,
+                get hambre() {
+                    return this._hambre
+                },
+            },
+            calcular(hambre, felicidad) {
+                if (this.basicos._hambre) {
+                    if (tamagotchi.hambre > 80) {
+                        console.log('Tu mascota tiene hambre', hambre)
+                    }
+                }
+            }
+        }
+        const formulario = document.querySelector('form')
+        const botonAlimentar = document.querySelector('#alimentar')
+        const botonJugar = document.querySelector('#jugar')
+        const indcadorhambre = document.querySelector('#valor-hambre')
+        const indicadorfelicidad = document.querySelector('#valor-felicidad')
+
+        function actualizarEstado(mensaje) {
+            document.querySelector('#valor-hambre').textContent = tamagotchi.hambre
+            document.querySelector('#valor-felicidad').textContent = tamagotchi.felicidad
+            document.querySelector('#registro').textContent = `${mensaje} Hambre: ${tamagotchi.hambre}. Felicidad: ${tamagotchi.felicidad}.`
+            console.log(`hambre: ${tamagotchi.hambre} felicidad: ${tamagotchi.felicidad}`)
+        }
+
+        botonAlimentar.addEventListener('click', () => tamagotchi.alimentar())
+        botonJugar.addEventListener('click', () => tamagotchi.jugar())
+
+        formulario.addEventListener('submit', nombrarTamagotchi)
+
+        function nombrarTamagotchi(event) {
+            event.preventDefault()
+            const nombre =  event.target.querySelector('input').value
+            tamagotchi.nacer(nombre)
+        }
+
+
+    </script>    
+</body>
+</html>

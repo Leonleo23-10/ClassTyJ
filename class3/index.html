@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tamagotchi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="tamagotchi" 
+        style="display: flex; 
+        justify-content: center;
+        align-content: center;
+        border: 5px solid blue;
+        "
+    >
+        <form>
+            <label for="name">Nómbrame</label>
+            <input id="name" name="name" type="text" placeholder="Escribe un nombre">
+            <button type="submit">Guardar</button>
+        </form>
+
+        <img src="https://www.gifsanimados.org/data/media/476/huevo-imagen-animada-0003.gif" 
+            alt=""
+            style="width: 30vw; margin-top: 10px;"
+        >
+
+        <div id="controles" style="visibility: hidden;">
+            <button id="alimentar" type="button">Alimentar</button>
+            <button id="jugar" type="button">Jugar</button>
+        </div>
+
+        <section id="estado" aria-live="polite">
+            <p><strong>Estado de <span id="nombre-mascota">tu mascota</span></strong></p>
+            <p>Hambre: <span id="valor-hambre">90</span></p>
+            <p>Felicidad: <span id="valor-felicidad">30</span></p>
+            <output id="registro">Escribe un nombre para comenzar.</output>
+        </section>
+    </div>
+    <script>
+          const tamagotchi = {
+            nombre: '',
+            hambre: 90,
+            felicidad: 30,
+
+            nacer(nombre) {
+                this.nombre = nombre
+                setInterval(this.pasarTiempo.bind(this), 3000);
+                document.querySelector('#nombre-mascota').textContent = this.nombre
+                document.querySelector('img').src = 'https://www.gifsanimados.org/data/media/187/dinosaurio-imagen-animada-0007.gif'
+                document.querySelector('form').style.visibility = 'hidden'
+                document.querySelector('#controles').style.visibility = 'visible'//hace que se vean los elementos
+                actualizarEstado('¡Ha nacido tu mascota!')
+            },
+            pasarTiempo() {
+                this.hambre += 5
+                this.felicidad -= 2
+                actualizarEstado('El tiempo ha pasado.')
+               
+            },
+            alimentar() {
+                this.hambre -= 30
+                if (this.hambre < 0) this.hambre = 0
+                if (this.felicidad > 100) this.felicidad = 100
+                this.felicidad += 5
+                actualizarEstado('Has alimentado a tu mascota.')
+            },
+            jugar() {
+                if (this.felicidad > 100) this.felicidad = 100
+                if (this.hambre > 100) this.hambre = 100
+                this.hambre += 5
+                this.felicidad += 20
+                actualizarEstado('Habéis jugado juntos.')
+            }
+
+        }
+        
+        const formulario = document.querySelector('form')
+        const botonAlimentar = document.querySelector('#alimentar')
+        const botonJugar = document.querySelector('#jugar')
+
+        function actualizarEstado(mensaje) {
+            document.querySelector('#valor-hambre').textContent = tamagotchi.hambre
+            document.querySelector('#valor-felicidad').textContent = tamagotchi.felicidad
+            document.querySelector('#registro').textContent = `${mensaje} Hambre: ${tamagotchi.hambre}. Felicidad: ${tamagotchi.felicidad}.`
+            console.log(`hambre: ${tamagotchi.hambre} felicidad: ${tamagotchi.felicidad}`)
+        }
+
+        botonAlimentar.addEventListener('click', () => tamagotchi.alimentar())
+        botonJugar.addEventListener('click', () => tamagotchi.jugar())
+
+        formulario.addEventListener('submit', nombrarTamagotchi)
+
+        function nombrarTamagotchi(event) {
+            event.preventDefault()
+            const nombre =  event.target.querySelector('input').value
+            tamagotchi.nacer(nombre)
+        }
+
+
+    </script>    
+</body>
+</html>

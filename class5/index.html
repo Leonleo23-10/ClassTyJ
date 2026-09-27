@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body style="background-color: rgb(18, 25, 26);">
+    <h1 style="text-align: center; color: azure;">Detector de movimiento</h1>
+    <div style="display: flex; height: 60dvh;">
+        <video 
+            style="
+            flex: 1;
+            aspect-ratio: 4 / 3;
+            background-color: rgb(25, 36, 46);
+            "
+            autoplay 
+            playsinline
+        ></video>
+        <canvas id="visibleCanvas" 
+            style="aspect-ratio: 4 / 3; 
+            flex: 1;
+            object-fit: contain;
+            background-color: rgb(25, 36, 46); 
+            " 
+        ></canvas>
+    </div>
+    <div style="text-align: center;">
+        <p style="background-color: rgb(173, 255, 47);
+            font-size: larger;
+            visibility: hidden;
+            "
+            id="indicadorDeMovimiento"
+        >
+            ¡Movimiento Detectado!
+        </p>
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <button style="font-size: larger;" id="buttonStart">Comenzar a detectar</button>
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+        <button style="font-size: larger;" id="buttonStop">Parar de detectar</button>
+    </div>
+
+    <canvas id="ghostCanvas" style="display: none;"></canvas>
+
+    <script type="module">
+
+        import { convertirAGreyScale } from "./videoUtils.js"
+        import { compararImagenes } from "./videoUtils.js"
+
+        const videoCamera = document.querySelector('video')
+        const buttonStart = document.getElementById('buttonStart')
+        const buttonStop = document.getElementById('buttonStop')
+        const indicadorDeMovimiento = document.getElementById('indicadorDeMovimiento')
+        const visibleCanvas = document.getElementById('visibleCanvas')
+        const ghostCanvas = document.getElementById('ghostCanvas')
+
+        const visibleCanvasContext = visibleCanvas.getContext('2d');
+        const ghostCanvasContext = ghostCanvas.getContext('2d');
+
+        let frameAnterior = null;
+        let animationFrameId = null;
+
+        buttonStart.addEventListener('click', function clickEnButtonStart() {
+            // Si ya hay una transmisión activa, la detenemos antes de iniciar otra
+            detenerDeteccion();
+
+            navigator.mediaDevices.getUserMedia({
+                video: true
+            }).then(function comenzarStreamDeVideo(stream) {
+                videoCamera.srcObject = stream;
+                videoCamera.addEventListener('loadedmetadata', function iniciarDeteccion() {
+                    visibleCanvas.width = videoCamera.videoWidth;
+                    visibleCanvas.height = videoCamera.videoHeight;
+
+                    ghostCanvas.width = videoCamera.videoWidth;
+                    ghostCanvas.height = videoCamera.videoHeight;
+
+                    analizarFrame();
+                }, { once: true });
+            }).catch(function (error) {
+                console.error("Error al acceder a la cámara:", error);
+            });
+        });
+        
+        buttonStop.addEventListener('click', function clickEnButtonStop() {
+            detenerDeteccion();
+        });
+
+        function detenerDeteccion() {
+            // 1. Cancelar el ciclo de animación si está activo
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = null;
+            }
+
+            // 2. Detener las pistas de video de la cámara
+            if (videoCamera.srcObject) {
+                const stream = videoCamera.srcObject;
+                const tracks = stream.getTracks();
+                tracks.forEach(function(track) {
+                    track.stop();
+                });
+                videoCamera.srcObject = null;
+            }
+
+            // 3. Reiniciar variables y estado visual
+            frameAnterior = null;
+            indicadorDeMovimiento.style.visibility = 'hidden';
+            visibleCanvasContext.clearRect(0, 0, visibleCanvas.width, visibleCanvas.height);
+        }
+
+        function analizarFrame() {
+            ghostCanvasContext.drawImage(
+                videoCamera,
+                0,
+                0,
+                videoCamera.videoWidth,
+                videoCamera.videoHeight
+            );
+
+            const frameActual = ghostCanvasContext.getImageData(
+                0,
+                0,
+                videoCamera.videoWidth,
+                videoCamera.videoHeight
+            );
+
+            // Convertir fotograma actual a escala de grises
+            convertirAGreyScale(frameActual);
+
+            // Renderizar el canal en escala de grises en el canvas visible
+            visibleCanvasContext.putImageData(
+                frameActual,
+                0,
+                0
+            );
+
+            // Si existe un fotograma anterior, compararlos
+            if (frameAnterior) {
+                if (compararImagenes(frameActual, frameAnterior)) {
+                    indicadorDeMovimiento.style.visibility = 'visible';
+                } else {
+                    indicadorDeMovimiento.style.visibility = 'hidden';
+                }
+            }
+
+            // Guardar el fotograma actual para el próximo ciclo
+            frameAnterior = frameActual;
+
+            animationFrameId = requestAnimationFrame(analizarFrame);
+        }
+    </script>
+</body>
+</html>
+
+
