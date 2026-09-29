@@ -131,14 +131,14 @@
             // Convertir fotograma actual a escala de grises
             convertirAGreyScale(frameActual);
 
-            // Renderizar el canal en escala de grises en el canvas visible
-            visibleCanvasContext.putImageData(
-                frameActual,
-                0,
-                0
+            // Clonar fotograma limpio antes de pintar el recuadro rojo sobre frameActual
+            const frameLimpio = new ImageData(
+                new Uint8ClampedArray(frameActual.data),
+                frameActual.width,
+                frameActual.height
             );
 
-            // Si existe un fotograma anterior, compararlos
+            // Si existe un fotograma anterior, compararlos (esto pintará el recuadro sobre frameActual)
             if (frameAnterior) {
                 if (compararImagenes(frameActual, frameAnterior)) {
                     indicadorDeMovimiento.style.visibility = 'visible';
@@ -147,8 +147,15 @@
                 }
             }
 
-            // Guardar el fotograma actual para el próximo ciclo
-            frameAnterior = frameActual;
+            // Renderizar el canal en escala de grises (con recuadro rojo si hubo movimiento) en el canvas visible
+            visibleCanvasContext.putImageData(
+                frameActual,
+                0,
+                0
+            );
+
+            // Guardar la copia limpia para el próximo ciclo
+            frameAnterior = frameLimpio;
 
             animationFrameId = requestAnimationFrame(analizarFrame);
         }
