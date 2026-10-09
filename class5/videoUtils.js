@@ -7,12 +7,12 @@ export function convertirAGreyScale(imageData) {
 
     /* 
     Formula de conversion de RGB a escala de grises
-        (r * 0.299) + (g * 0.587) + (b * 0.114)
+        (r * 77) + (g * 150) + (b * 29) >> 8
     */
     for(let i = 0; i < pixeles.length; i += 4) {
-        const luma = (pixeles[i] * 0.299)
-        + (pixeles[i + 1] * 0.587)
-        + (pixeles[i + 2] * 0.114)
+        const luma = (pixeles[i] * 77)
+        + (pixeles[i + 1] * 150)
+        + (pixeles[i + 2] * 29) >> 8
 
         pixeles[i] = luma
         pixeles[i + 1] = luma
