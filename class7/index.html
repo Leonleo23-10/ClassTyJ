@@ -1,0 +1,41 @@
+<!--index.html-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#101827">
+    <title>Bloques de Avalanche</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <main class="dashboard">
+        <header class="page-header">
+            <p class="eyebrow">AVALANCHE · RED EN TIEMPO REAL</p>
+            <div class="heading-row">
+                <div>
+                    <h1>Lo último en Avalanche</h1>
+                    <p class="subtitle">Explora los bloques recientes de la red.</p>
+                </div>
+                <span class="network-badge"><span class="status-dot"></span>Avalanche C-Chain</span>
+            </div>
+        </header>
+
+        <section class="blocks-section" aria-labelledby="blocks-heading">
+            <div class="section-heading">
+                <div>
+                    <h2 id="blocks-heading">Bloques recientes</h2>
+                    <p class="section-description">Las actualizaciones aparecerán aquí.</p>
+                </div>
+            </div>
+            <div id="blocks-container" class="blocks-container" aria-live="polite" aria-label="Bloques recientes"></div>
+            <div class="section-footer">
+                <span class="footer-dot"></span>
+                <span>Vista previa de bloques</span>
+                <button id="desuscribir" type="button">Desuscribirse</button>
+            </div>
+        </section>
+    </main>
+    <script type="module" src="./main.js"></script>
+</body>
+</html>
